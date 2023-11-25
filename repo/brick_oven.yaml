@@ -1,0 +1,75 @@
+source: oven
+brick_config: brick.yaml
+dirs:
+  interface:
+    name:
+      format: snake
+  firebase:
+    include_if: is_firebase
+    name:
+      value: interface
+      format: snake
+  dio:
+    include_if: is_dio
+    name:
+      value: interface
+      format: snake
+
+files:
+  interface/cache.dart:
+    include_if: cache
+    name:
+      value: interface
+      format: snake
+      suffix: _cache
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      interface: _INTERFACE_
+      project: _PROJECT_
+  interface/interface.dart:
+    name:
+      value: interface
+      format: snake
+    vars:
+      interface: _INTERFACE_
+
+  # DIO
+  dio/source.dart:
+    include_if: source
+    name:
+      value: interface
+      format: snake
+      suffix: _source
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      interface: _INTERFACE_
+      project: _PROJECT_
+      all: _ALL_
+      by_id: _BY_ID_
+      create: _CREATE_
+      delete: _DELETE_
+      update_many: _UPDATE_MANY_
+      update: _UPDATE_
+
+  # FIREBASE
+  firebase/source.dart:
+    include_if: source
+    name:
+      value: interface
+      format: snake
+      suffix: _source
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      interface: _INTERFACE_
+      project: _PROJECT_
+      watch_all: _WATCH_ALL_
+      all: _ALL_
+      watch_by_id: _WATCH_BY_ID_
+      by_id: _BY_ID_
+      create: _CREATE_
+      delete: _DELETE_
+      update_many: _UPDATE_MANY_
+      update: _UPDATE_

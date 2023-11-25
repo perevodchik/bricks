@@ -1,0 +1,60 @@
+source: oven
+brick_config: brick.yaml
+dirs:
+  repo:
+    include_if: is_interface
+    name:
+      value: interface
+      format: snake
+files:
+  object.dart:
+    include_if_not: is_interface
+    name:
+      value: singular
+      format: snake
+    vars:
+      singular: _SINGULAR_
+      copy_with: _COPY_WITH_
+
+  repo/repo.dart:
+    name:
+      value: interface
+      format: snake
+    vars:
+      interface: _INTERFACE_
+      cache: _CACHE_
+      source: _SOURCE_
+
+  repo/cache.dart:
+    include_if: cache
+    name:
+      value: interface
+      prefix: i_
+      suffix: _cache
+      format: snake
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      interface: _INTERFACE_
+      project: _PROJECT_
+
+  repo/source.dart:
+    include_if: source
+    name:
+      value: interface
+      prefix: i_
+      suffix: _source
+      format: snake
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      interface: _INTERFACE_
+      project: _PROJECT_
+      all: _ALL_
+      watch_by_id: _WATCH_BY_ID_
+      by_id: _BY_ID_
+      create: _CREATE_
+      delete: _DELETE_
+      update_many: _UPDATE_MANY_
+      update: _UPDATE_
+      watch_all: _WATCH_ALL_

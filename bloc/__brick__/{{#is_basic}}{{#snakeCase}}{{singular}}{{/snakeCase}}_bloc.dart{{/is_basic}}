@@ -1,0 +1,31 @@
+import 'package:autoequal/autoequal.dart';
+import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart' as con;
+import 'package:equatable/equatable.dart';
+
+part '{{#snakeCase}}{{{singular}}}{{/snakeCase}}_bloc.g.dart';
+part '{{#snakeCase}}{{{singular}}}{{/snakeCase}}_event.dart';
+part '{{#snakeCase}}{{{singular}}}{{/snakeCase}}_state.dart';
+
+// ignore: avoid_private_typedef_functions
+typedef _Emitter = Emitter<{{#pascalCase}}{{{singular}}}{{/pascalCase}}State>;
+
+class {{#pascalCase}}{{{singular}}}{{/pascalCase}}Bloc
+    extends Bloc<{{#pascalCase}}{{{singular}}}{{/pascalCase}}Event, {{#pascalCase}}{{{singular}}}{{/pascalCase}}State> {
+  {{#pascalCase}}{{{singular}}}{{/pascalCase}}Bloc() : super(const _Loading()) {
+    on<_Init>(_init);
+    on<_Fetch>(_fetch, transformer: con.droppable());
+
+    add(const _Init());
+  }
+
+  Future<void> _init(_Init event, _Emitter emit) async {
+    // TODO: implement _init
+    throw UnimplementedError('_init() has not been implemented.');
+  }
+
+  Future<void> _fetch(_Fetch event, _Emitter emit) async {
+    // TODO: implement _fetch
+    throw UnimplementedError('_fetch() has not been implemented.');
+  }
+}

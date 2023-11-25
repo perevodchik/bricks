@@ -1,0 +1,224 @@
+import 'dart:developer';
+
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_data/utils/parsers.dart';
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_domain/domain.dart';
+
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_data/utils/firestore.dart';
+
+class {{#pascalCase}}{{{interface}}}{{/pascalCase}}Source extends Firestore
+    implements I{{#pascalCase}}{{{interface}}}{{/pascalCase}}Source {
+  const {{#pascalCase}}{{{interface}}}{{/pascalCase}}Source() : super('{{#snakeCase}}{{{interface}}}{{/snakeCase}}');
+
+{{#all}}
+  @override
+  Future<RequestResult<List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> all() async {
+    final {{#camelCase}}{{{plural}}}{{/camelCase}} = <{{#pascalCase}}{{{singular}}}{{/pascalCase}}>[];
+
+    final snapshot = await collection.get();
+
+    for (final doc in snapshot.docs) {
+      final json = doc.data() as Map?;
+
+      if (json == null) {
+        continue;
+      }
+
+      json['id'] = doc.id;
+
+      try {
+        parseTimestamp(json);
+        final {{#camelCase}}{{{singular}}}{{/camelCase}} =
+            {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(Map<String, dynamic>.from(json));
+
+        {{#camelCase}}{{{plural}}}{{/camelCase}}.add({{#camelCase}}{{{singular}}}{{/camelCase}});
+      } catch (e) {
+        log('$e');
+      }
+    }
+
+    return RequestResult.success({{#camelCase}}{{{plural}}}{{/camelCase}});
+  }
+
+{{/all}}
+{{#by_id}}
+  @override
+  Future<RequestResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>> byId(String id) async {
+    final snapshot = await collection.doc(id).get();
+
+    final json = snapshot.data() as Map?;
+
+    if (json == null) {
+      return const RequestResult.failure('{{#sentenceCase}}{{{singular}}}{{/sentenceCase}} not found');
+    }
+
+    json['id'] = snapshot.id;
+
+    try {
+      parseTimestamp(json);
+      final {{#camelCase}}{{{singular}}}{{/camelCase}} =
+          {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(Map<String, dynamic>.from(json));
+
+      return RequestResult.success({{#camelCase}}{{{singular}}}{{/camelCase}});
+    } catch (e) {
+      log('$e');
+
+      return const RequestResult.failure('{{#sentenceCase}}{{{singular}}}{{/sentenceCase}} not found');
+    }
+  }
+
+{{/by_id}}
+{{#create}}
+  @override
+  Future<RequestResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>> create() async {
+    final new{{#pascalCase}}{{{singular}}}{{/pascalCase}} = {{#pascalCase}}{{{singular}}}{{/pascalCase}}.create();
+
+    try {
+      final doc = collection.doc();
+
+      final json = new{{#pascalCase}}{{{singular}}}{{/pascalCase}}.toJson();
+
+      json['id'] = doc.id;
+
+      await doc.set(json);
+
+      return RequestResult.success({{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(json));
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+  }
+
+{{/create}}
+{{#delete}}
+  @override
+  Future<RequestResult<void>> delete(String id) async {
+    try {
+      await collection.doc(id).delete();
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+
+    return const RequestResult.success(null);
+  }
+
+{{/delete}}
+{{#update}}
+  @override
+  Future<RequestResult<void>> update({{#pascalCase}}{{{singular}}}{{/pascalCase}} {{#camelCase}}{{{singular}}}{{/camelCase}}) async {
+    try {
+      await collection.doc({{#camelCase}}{{{singular}}}{{/camelCase}}.id).set({{#camelCase}}{{{singular}}}{{/camelCase}}.toJson());
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+
+    return const RequestResult.success(null);
+  }
+
+{{/update}}
+{{#update_many}}
+  @override
+  Future<RequestResult<void>> updateMany(
+    List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}> {{#camelCase}}{{{plural}}}{{/camelCase}},
+  ) async {
+    try {
+      var batch = newBatch();
+
+      var count = 0;
+      for (final {{#camelCase}}{{{singular}}}{{/camelCase}} in {{#camelCase}}{{{plural}}}{{/camelCase}}) {
+        batch.set(collection.doc({{#camelCase}}{{{singular}}}{{/camelCase}}.id), {{#camelCase}}{{{singular}}}{{/camelCase}}.toJson());
+
+        count++;
+
+        if (count == 500) {
+          await batch.commit();
+
+          batch = newBatch();
+
+          count = 0;
+        }
+      }
+
+      await batch.commit();
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+
+    return const RequestResult.success(null);
+  }
+
+{{/update_many}}
+{{#watch_all}}
+  @override
+  Future<Stream<List<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>>> watchAll() async {
+    try {
+      final stream = collection.snapshots();
+
+      return stream.map((snapshot) {
+        final changes = <StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>[];
+
+        for (final change in snapshot.docChanges) {
+          if (change.type.isRemoved) {
+            changes.add(StreamResult.deleted(change.doc.id));
+            continue;
+          }
+
+          final doc = change.doc;
+          final json = doc.data() as Map?;
+
+          if (json == null) {
+            continue;
+          }
+
+          json['id'] = doc.id;
+
+          try {
+            parseTimestamp(json);
+            final {{#camelCase}}{{{singular}}}{{/camelCase}} =
+                {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(Map<String, dynamic>.from(json));
+
+            changes.add(StreamResult({{#camelCase}}{{{singular}}}{{/camelCase}}, key: {{#camelCase}}{{{singular}}}{{/camelCase}}.id));
+          } catch (e) {
+            log('$e');
+          }
+        }
+
+        return changes;
+      });
+    } catch (e) {
+      return Stream.value([StreamResult.failure(e.toString())]);
+    }
+  }
+
+{{/watch_all}}
+{{#watch_by_id}}
+  @override
+  Future<Stream<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> watchById(String id) async {
+    try {
+      final stream = collection.doc(id).snapshots();
+
+      return stream.map((snapshot) {
+        final json = snapshot.data() as Map?;
+
+        if (json == null) {
+          return const StreamResult.failure('{{#sentenceCase}}{{{singular}}}{{/sentenceCase}} not found');
+        }
+
+        json['id'] = snapshot.id;
+
+        try {
+          parseTimestamp(json);
+          final {{#camelCase}}{{{singular}}}{{/camelCase}} =
+              {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(Map<String, dynamic>.from(json));
+
+          return StreamResult({{#camelCase}}{{{singular}}}{{/camelCase}}, key: {{#camelCase}}{{{singular}}}{{/camelCase}}.id);
+        } catch (e) {
+          log('$e');
+
+          return const StreamResult.failure('{{#sentenceCase}}{{{singular}}}{{/sentenceCase}} not found');
+        }
+      });
+    } catch (e) {
+      return Stream.value(StreamResult.failure(e.toString()));
+    }
+  }
+{{/watch_by_id}}
+}

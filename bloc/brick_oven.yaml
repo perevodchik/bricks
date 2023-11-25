@@ -1,0 +1,95 @@
+source: oven
+brick_config: brick.yaml
+files:
+  # BASIC
+  basic_bloc.dart:
+    include_if: is_basic
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _bloc
+    vars:
+      singular: _SINGULAR_
+  basic_event.dart:
+    include_if: is_basic
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _event
+    vars:
+      singular: _SINGULAR_
+  basic_state.dart:
+    include_if: is_basic
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _state
+    vars:
+      singular: _SINGULAR_
+
+  # SINGULAR
+  singular_bloc.dart:
+    include_if: is_singular
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _bloc
+    vars:
+      interface: _INTERFACE_
+      singular: _SINGULAR_
+      project: _PROJECT_
+  singular_event.dart:
+    include_if: is_singular
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _event
+    vars:
+      singular: _SINGULAR_
+  singular_state.dart:
+    include_if: is_singular
+    name:
+      braces: 2
+      value: singular
+      format: snake
+      suffix: _state
+    vars:
+      singular: _SINGULAR_
+
+  # PLURAL
+  plural_bloc.dart:
+    include_if: is_plural
+    name:
+      braces: 2
+      value: plural
+      format: snake
+      suffix: _bloc
+    vars:
+      interface: _INTERFACE_
+      singular: _SINGULAR_
+      plural: _PLURAL_
+      project: _PROJECT_
+  plural_event.dart:
+    include_if: is_plural
+    name:
+      braces: 2
+      value: plural
+      format: snake
+      suffix: _event
+    vars:
+      plural: _PLURAL_
+  plural_state.dart:
+    include_if: is_plural
+    name:
+      braces: 2
+      value: plural
+      format: snake
+      suffix: _state
+    vars:
+      singular: _SINGULAR_
+      plural: _PLURAL_

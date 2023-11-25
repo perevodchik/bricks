@@ -1,0 +1,32 @@
+source: oven
+brick_config: brick.yaml
+dirs:
+  example:
+    name:
+      value: name
+      format: snake
+files:
+  example/example_screen.dart:
+    name:
+      value: name
+      format: snake
+      suffix: _screen
+    vars:
+      name: _NAME_
+      project: _PROJECT_
+  example/components/__description.dart:
+    vars:
+      name: _NAME_
+  example/example_view.dart:
+    name:
+      value: name
+      format: snake
+      suffix: _view
+    vars:
+      name: _NAME_
+  example/example.dart:
+    name:
+      value: name
+      format: snake
+    vars:
+      name: _NAME_

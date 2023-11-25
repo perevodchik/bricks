@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/bloc/hooks/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/bloc/hooks/build" />
+      <excludeFolder url="file://$MODULE_DIR$/bloc/hooks/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/repo/hooks/build" />
+      <excludeFolder url="file://$MODULE_DIR$/repo/hooks/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/repo/hooks/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/screen/hooks/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/screen/hooks/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/screen/hooks/build" />
+      <excludeFolder url="file://$MODULE_DIR$/shared_hook_methods/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/shared_hook_methods/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/shared_hook_methods/build" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/model/hooks/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/model/hooks/build" />
+      <excludeFolder url="file://$MODULE_DIR$/model/hooks/.pub" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
+  </component>
+</module>

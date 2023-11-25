@@ -1,0 +1,53 @@
+cook:
+  all:
+    - brick_oven cook all -o .
+  bloc:
+    - brick_oven cook bloc -o .
+  model:
+    - brick_oven cook model -o .
+  screen:
+    - brick_oven cook screen -o .
+  repo:
+    - brick_oven cook repo -o .
+
+watch:
+  all:
+    - brick_oven cook all -w -o .
+  bloc:
+    - brick_oven cook bloc -w -o .
+  model:
+    - brick_oven cook model -w -o .
+  screen:
+    - brick_oven cook screen -w -o .
+  repo:
+    - brick_oven cook repo -w -o .
+
+install:
+  all:
+    - $install:bloc
+    - $install:model
+    - $install:screen
+    - $install:repo
+  bloc:
+    - $uninstall:bloc
+    - mason add bloc -g --path bloc
+  model:
+    - $uninstall:model
+    - mason add model -g --path model
+  screen:
+    - $uninstall:screen
+    - mason add screen -g --path screen
+  repo:
+    - $uninstall:repo
+    - mason add repo -g --path repo
+
+uninstall:
+  all:
+    - $uninstall:bloc
+    - $uninstall:model
+    - $uninstall:screen
+    - $uninstall:repo
+  bloc: mason remove -g bloc
+  model: mason remove -g model
+  screen: mason remove -g screen
+  repo: mason remove -g repo

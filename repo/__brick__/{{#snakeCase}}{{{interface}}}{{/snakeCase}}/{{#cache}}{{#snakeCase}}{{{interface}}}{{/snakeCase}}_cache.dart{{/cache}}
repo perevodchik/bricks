@@ -1,0 +1,186 @@
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_domain/domain.dart';
+
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_data/utils/database.dart';
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_data/utils/hive_cache.dart';
+
+// ignore: strict_raw_type
+class {{#pascalCase}}{{{interface}}}{{/pascalCase}}Cache extends HiveCache
+    implements I{{#pascalCase}}{{{interface}}}{{/pascalCase}}Cache {
+  {{#pascalCase}}{{{interface}}}{{/pascalCase}}Cache() : super(Database.{{#camelCase}}{{{interface}}}{{/camelCase}});
+
+  @override
+  Future<RequestResult<List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> all() async {
+    final {{#camelCase}}{{{plural}}}{{/camelCase}} = <{{#pascalCase}}{{{singular}}}{{/pascalCase}}>[];
+
+    final db = await cache();
+
+    for (var i = 0; i < db.length; i++) {
+      try {
+        final value = db.values.elementAt(i);
+
+        {{#camelCase}}{{{plural}}}{{/camelCase}}.add(
+          {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(
+            Map<String, dynamic>.from(value),
+          ),
+        );
+      } catch (_) {
+        await db.deleteAt(i);
+      }
+    }
+
+    return RequestResult.success({{#camelCase}}{{{plural}}}{{/camelCase}});
+  }
+
+  @override
+  Future<RequestResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>> byId(String id) async {
+    final db = await cache();
+
+    final value = db.get(id);
+
+    if (value == null) {
+      return const RequestResult.failure('{{#pascalCase}}{{{singular}}}{{/pascalCase}} not found');
+    }
+
+    try {
+      return RequestResult.success(
+        {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(
+          Map<String, dynamic>.from(value),
+        ),
+      );
+    } catch (_) {
+      await db.delete(id);
+
+      return const RequestResult.failure('{{#pascalCase}}{{{singular}}}{{/pascalCase}} not found');
+    }
+  }
+
+  @override
+  Future<RequestResult<void>> delete(String id) async {
+    try {
+      final db = await cache();
+
+      await db.delete(id);
+    } catch (e) {
+      return RequestResult.failure('$e');
+    }
+
+    return const RequestResult.success(null);
+  }
+
+  @override
+  Future<RequestResult<void>> deleteAll([Set<String>? ids]) async {
+    try {
+      final db = await cache();
+
+      if (ids == null) {
+        await db.clear();
+      } else {
+        await db.deleteAll(ids);
+      }
+    } catch (e) {
+      return RequestResult.failure('$e');
+    }
+
+    return const RequestResult.success(null);
+  }
+
+  @override
+  Future<RequestResult<void>> save({{#pascalCase}}{{{singular}}}{{/pascalCase}} {{#camelCase}}{{{singular}}}{{/camelCase}}) async {
+    try {
+      final db = await cache();
+
+      await db.put({{#camelCase}}{{{singular}}}{{/camelCase}}.id, {{#camelCase}}{{{singular}}}{{/camelCase}}.toJson());
+    } catch (e) {
+      return RequestResult.failure('$e');
+    }
+
+    return const RequestResult.success(null);
+  }
+
+  @override
+  Future<RequestResult<void>> saveAll(
+    List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}> {{#camelCase}}{{{plural}}}{{/camelCase}},
+  ) async {
+    try {
+      final entries = {{#camelCase}}{{{plural}}}{{/camelCase}}.asMap().map(
+            (index, {{#camelCase}}{{{singular}}}{{/camelCase}}) => MapEntry(
+              {{#camelCase}}{{{singular}}}{{/camelCase}}.id,
+              {{#camelCase}}{{{singular}}}{{/camelCase}}.toJson(),
+            ),
+          );
+
+      final db = await cache();
+
+      await db.putAll(entries);
+    } catch (e) {
+      return RequestResult.failure('$e');
+    }
+
+    return const RequestResult.success(null);
+  }
+
+  @override
+  Future<Stream<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> watchAll() async {
+    final db = await cache();
+
+    final stream = db.watch();
+
+    return stream.asyncMap<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>(
+      (event) {
+        final key = event.key as String;
+        if (event.deleted) {
+          return StreamResult.deleted(key);
+        }
+
+        final data = event.value as Map?;
+
+        if (data == null) {
+          return StreamResult.deleted(key);
+        }
+
+        try {
+          return StreamResult(
+            {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(
+              Map<String, dynamic>.from(data),
+            ),
+            key: key,
+          );
+        } catch (e) {
+          return StreamResult.failure('$e');
+        }
+      },
+    );
+  }
+
+  @override
+  Future<Stream<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> watchById(String id) async {
+    final db = await cache();
+
+    final stream = db.watch(key: id);
+
+    return stream.asyncMap<StreamResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>(
+      (event) {
+        if (event.deleted) {
+          return StreamResult.deleted(id);
+        }
+
+        final data = event.value as Map?;
+
+        if (data == null) {
+          return StreamResult.deleted(id);
+        }
+
+        try {
+          return StreamResult(
+            {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(
+              Map<String, dynamic>.from(data),
+            ),
+            key: id,
+          );
+        } catch (e) {
+          return StreamResult.failure('$e');
+        }
+      },
+    );
+  }
+}

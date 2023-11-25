@@ -1,0 +1,142 @@
+import 'dart:developer';
+
+import 'package:{{#snakeCase}}{{{project}}}{{/snakeCase}}_domain/domain.dart';
+
+import 'package:data/util/util.dart';
+
+class {{#pascalCase}}{{{interface}}}{{/pascalCase}}Source implements I{{#pascalCase}}{{{interface}}}{{/pascalCase}}Source {
+  const {{#pascalCase}}{{{interface}}}{{/pascalCase}}Source();
+{{#all}}
+  @override
+  Future<RequestResult<List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>>> all() async {
+    try {
+      final {{#camelCase}}{{{plural}}}{{/camelCase}} = <{{#pascalCase}}{{{singular}}}{{/pascalCase}}>[];
+
+      final result = await dio.get<Map>('${dio.url}/NOT_IMPLEMENTED');
+
+      final data = result.data;
+
+      if (data == null) {
+        return RequestResult.failure('No data');
+      }
+
+      final {{#camelCase}}{{{plural}}}{{/camelCase}}Json = List<Map>.from(data as List);
+
+      for (final {{#camelCase}}{{{singular}}}{{/camelCase}}Json in {{#camelCase}}{{{plural}}}{{/camelCase}}Json) {
+        try {
+          {{#camelCase}}{{{plural}}}{{/camelCase}}.add(
+            {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson(
+              Map<String, dynamic>.from({{#camelCase}}{{{singular}}}{{/camelCase}}Json),
+            ),
+          );
+        } catch (e) {
+          log('Error parsing {{#camelCase}}{{{singular}}}{{/camelCase}}, $e | ${{#camelCase}}{{{singular}}}{{/camelCase}}Json');
+        }
+      }
+
+      return RequestResult.success({{#camelCase}}{{{plural}}}{{/camelCase}});
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+  }
+
+{{/all}}
+{{#by_id}}
+  @override
+  Future<RequestResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>> byId(String id) async {
+    try {
+      final result = await dio.get<Map>('${dio.url}/NOT_IMPLEMENTED/$id');
+
+      final data = result.data;
+
+      if (data == null) {
+        return RequestResult.failure('No data');
+      }
+
+      final {{#camelCase}}{{{singular}}}{{/camelCase}}Json = Map<String, dynamic>.from(data);
+
+      return RequestResult.success(
+        {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson({{#camelCase}}{{{singular}}}{{/camelCase}}Json),
+      );
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+  }
+
+{{/by_id}}
+{{#create}}
+  @override
+  Future<RequestResult<{{#pascalCase}}{{{singular}}}{{/pascalCase}}>> create() async {
+    try {
+      final result = await dio.post<Map>(
+        '${dio.url}/NOT_IMPLEMENTED',
+        data: {},
+      );
+
+      final data = result.data;
+
+      if (data == null) {
+        return RequestResult.failure('No data');
+      }
+
+      final {{#camelCase}}{{{singular}}}{{/camelCase}}Json = Map<String, dynamic>.from(data);
+
+      return RequestResult.success(
+        {{#pascalCase}}{{{singular}}}{{/pascalCase}}.fromJson({{#camelCase}}{{{singular}}}{{/camelCase}}Json),
+      );
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+  }
+
+{{/create}}
+{{#delete}}
+  @override
+  Future<RequestResult<void>> delete(String id) async {
+    try {
+      await dio.delete<Map>(
+        '${dio.url}/NOT_IMPLEMENTED/$id',
+      );
+
+      return const RequestResult.success(null);
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+  }
+
+{{/delete}}
+{{#update}}
+  @override
+  Future<RequestResult<void>> update({{#pascalCase}}{{{singular}}}{{/pascalCase}} {{#camelCase}}{{{singular}}}{{/camelCase}}) async {
+    try {
+      final id = {{#camelCase}}{{{singular}}}{{/camelCase}}.id;
+
+      await dio.put<Map>(
+        '${dio.url}/NOT_IMPLEMENTED/$id',
+        data: {{#camelCase}}{{{singular}}}{{/camelCase}}.toJson(),
+      );
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+
+    return const RequestResult.success(null);
+  }
+
+{{/update}}
+{{#update_many}}
+  @override
+  Future<RequestResult<void>> updateMany(
+      List<{{#pascalCase}}{{{singular}}}{{/pascalCase}}> {{#camelCase}}{{{plural}}}{{/camelCase}}) async {
+    try {
+      await dio.put<Map>(
+        '${dio.url}/NOT_IMPLEMENTED',
+        data: {{#camelCase}}{{{plural}}}{{/camelCase}}.toJson(),
+      );
+    } catch (e) {
+      return RequestResult.failure(e.toString());
+    }
+
+    return const RequestResult.success(null);
+  }
+{{/update_many}}
+}
